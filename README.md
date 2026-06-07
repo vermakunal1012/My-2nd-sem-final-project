@@ -101,7 +101,7 @@ print(f"\nFake Score: {fake_score}/5")
 Python
 Pandas
 Rule-Based Logic
-📊 Output
+                                                                                                                                                                 📊 Output
 Displays dataset features
 Takes user input
 Calculates fake score
