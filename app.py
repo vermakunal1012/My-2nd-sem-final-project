@@ -1,130 +1,78 @@
-import tkinter as tk
-from tkinter import messagebox
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+# =========================================
+# FAKE ACCOUNT DETECTOR USING YOUR CSV FILE
+# =========================================
 
-# --------------------------
-# Sample Training Data
-# [followers, following, posts, bio_length, account_age]
-# --------------------------
-X = np.array([
-    [5000, 300, 200, 50, 5],   # Real
-    [50, 5000, 2, 5, 1],       # Fake
-    [8000, 400, 500, 80, 6],   # Real
-    [100, 7000, 1, 0, 1],      # Fake
-    [6000, 500, 300, 70, 4],   # Real
-    [70, 4000, 3, 2, 1]        # Fake
-])
+import pandas as pd
 
-# Labels
-# 0 = Real
-# 1 = Fake
+# Load your CSV file
+data = pd.read_csv("fake_account__data_dict(1).csv")
 
-y = np.array([0, 1, 0, 1, 0, 1])
+# =========================================
+# SHOW DATASET
+# =========================================
 
-# --------------------------
-# Train Model
-# --------------------------
+print("\nDataset Preview:\n")
+print(data.head())
 
-model = RandomForestClassifier()
-model.fit(X, y)
+print("\nColumn Names:\n")
+print(data.columns)
 
-# --------------------------
-# Prediction Function
-# --------------------------
+# =========================================
+# DISPLAY FEATURES PROPERLY
+# =========================================
 
-def predict_account():
+print("\n========== FEATURE DETAILS ==========\n")
 
-    try:
-        followers = int(entry_followers.get())
-        following = int(entry_following.get())
-        posts = int(entry_posts.get())
-        bio = int(entry_bio.get())
-        age = int(entry_age.get())
+for index, row in data.iterrows():
 
-        data = np.array([[followers, following, posts, bio, age]])
+    print(f"Feature Number : {row['No.']}")
+    print(f"Feature Name   : {row['Column name']}")
+    print(f"Data Type      : {row['Data Type']}")
+    print(f"Description    : {row['Description']}")
+    print("-" * 60)
 
-        prediction = model.predict(data)
+# =========================================
+# SIMPLE FAKE ACCOUNT CHECKER
+# =========================================
 
-        if prediction[0] == 1:
-            result_label.config(
-                text="Fake Account Detected",
-                fg="red"
-            )
-        else:
-            result_label.config(
-                text="Real Account",
-                fg="green"
-            )
+print("\n========== FAKE ACCOUNT CHECKER ==========\n")
 
-    except:
-        messagebox.showerror(
-            "Error",
-            "Please enter valid numbers"
-        )
+followers = int(input("Enter Followers: "))
+following = int(input("Enter Following: "))
+posts = int(input("Enter Number of Posts: "))
+profile_pic = int(input("Profile Picture? (1=yes,0=no): "))
+verified = int(input("Verified Account? (1=yes,0=no): "))
 
-# --------------------------
-# GUI Window
-# --------------------------
+# =========================================
+# SIMPLE RULE-BASED DETECTION
+# =========================================
 
-root = tk.Tk()
-root.title("Fake Social Account Detector")
-root.geometry("400x500")
-root.configure(bg="white")
+fake_score = 0
 
-# Heading
-heading = tk.Label(
-    root,
-    text="Real vs Fake Prediction",
-    font=("Arial", 18, "bold"),
-    bg="white"
-)
-heading.pack(pady=15)
+if followers < 20:
+    fake_score += 1
 
-# Followers
-tk.Label(root, text="Followers", bg="white").pack()
-entry_followers = tk.Entry(root, width=30)
-entry_followers.pack(pady=5)
+if following > 1000:
+    fake_score += 1
 
-# Following
-tk.Label(root, text="Following", bg="white").pack()
-entry_following = tk.Entry(root, width=30)
-entry_following.pack(pady=5)
+if posts < 3:
+    fake_score += 1
 
-# Posts
-tk.Label(root, text="Posts", bg="white").pack()
-entry_posts = tk.Entry(root, width=30)
-entry_posts.pack(pady=5)
+if profile_pic == 0:
+    fake_score += 1
 
-# Bio Length
-tk.Label(root, text="Bio Length", bg="white").pack()
-entry_bio = tk.Entry(root, width=30)
-entry_bio.pack(pady=5)
+if verified == 0:
+    fake_score += 1
 
-# Account Age
-tk.Label(root, text="Account Age", bg="white").pack()
-entry_age = tk.Entry(root, width=30)
-entry_age.pack(pady=5)
+# =========================================
+# RESULT
+# =========================================
 
-# Button
-predict_btn = tk.Button(
-    root,
-    text="Predict",
-    command=predict_account,
-    bg="blue",
-    fg="white",
-    font=("Arial", 12, "bold")
-)
-predict_btn.pack(pady=20)
+print("\n========== RESULT ==========\n")
 
-# Result
-result_label = tk.Label(
-    root,
-    text="",
-    font=("Arial", 14, "bold"),
-    bg="white"
-)
-result_label.pack(pady=20)
+if fake_score >= 3:
+    print("Fake Account Detected")
+else:
+    print("Real Account")
 
-# Run App
-root.mainloop()
+print(f"\nFake Score: {fake_score}/5")
